@@ -1,0 +1,14 @@
+# Minimal .gitignore for Breast Cancer Prediction System
+
+# Ignore Python virtual environment
+.venv/
+
+# Ignore VS Code settings
+.vscode/
+
+# Ignore documentation files (case-insensitive)
+README.md
+readme.md
+SUBMISSION_GUIDE.md
+submission_guide.md
+BreastCancer_hosted_webGUI_link.txt

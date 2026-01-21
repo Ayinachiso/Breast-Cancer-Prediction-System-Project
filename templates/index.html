@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+    ============================================
+    BREAST CANCER PREDICTION SYSTEM
+    ============================================
+    Educational Purpose Only
+    This system uses Neural Networks (Deep Learning) to predict
+    whether a breast tumor is benign or malignant based on 5 features.
+    
+    DISCLAIMER: This is NOT a medical diagnostic tool.
+    Always consult qualified healthcare professionals.
+    ============================================
+-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-powered breast cancer prediction system using neural networks for educational purposes">
+    <meta name="keywords" content="breast cancer, prediction, machine learning, neural networks, AI">
+    <meta name="author" content="Educational Project">
+    
+    <title>Breast Cancer Prediction System | AI-Powered Analysis</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- External CSS Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- ============================================
+         HEADER SECTION
+         Contains logo, title, and subtitle
+         ============================================ -->
+    <div class="header">
+        <!-- Animated Logo Icon -->
+        <div class="logo-icon">
+            <i class="fas fa-microscope"></i>
+        </div>
+        
+        <!-- Main Title -->
+        <h1>Breast Cancer Prediction System</h1>
+        
+        <!-- Subtitle -->
+        <p class="subtitle">AI-Powered Neural Network Analysis</p>
+    </div>
+
+    <!-- ============================================
+         MAIN CONTAINER
+         Contains the prediction form and results
+         ============================================ -->
+    <div class="container">
+        <!-- Section Title -->
+        <div class="section-title">
+            <i class="fas fa-notes-medical"></i>
+            <span>Enter Tumor Feature Values</span>
+        </div>
+
+        <!-- ============================================
+             PREDICTION FORM
+             Collects 5 tumor features for analysis
+             ============================================ -->
+        <form action="/generate_prediction" method="post" id="predictionForm">
+            
+            <!-- Input Field 1: Mean Radius -->
+            <div class="input-group">
+                <label for="mean_radius">
+                    <i class="fas fa-circle"></i>
+                    Mean Radius
+                </label>
+                <input 
+                    type="number" 
+                    step="any" 
+                    name="mean_radius" 
+                    id="mean_radius"
+                    placeholder="e.g., 14.5" 
+                    required
+                    aria-label="Mean Radius of tumor">
+            </div>
+
+            <!-- Input Field 2: Mean Texture -->
+            <div class="input-group">
+                <label for="mean_texture">
+                    <i class="fas fa-braille"></i>
+                    Mean Texture
+                </label>
+                <input 
+                    type="number" 
+                    step="any" 
+                    name="mean_texture" 
+                    id="mean_texture"
+                    placeholder="e.g., 19.8" 
+                    required
+                    aria-label="Mean Texture of tumor">
+            </div>
+
+            <!-- Input Field 3: Mean Perimeter -->
+            <div class="input-group">
+                <label for="mean_perimeter">
+                    <i class="fas fa-vector-square"></i>
+                    Mean Perimeter
+                </label>
+                <input 
+                    type="number" 
+                    step="any" 
+                    name="mean_perimeter" 
+                    id="mean_perimeter"
+                    placeholder="e.g., 95.2" 
+                    required
+                    aria-label="Mean Perimeter of tumor">
+            </div>
+
+            <!-- Input Field 4: Mean Area -->
+            <div class="input-group">
+                <label for="mean_area">
+                    <i class="fas fa-expand"></i>
+                    Mean Area
+                </label>
+                <input 
+                    type="number" 
+                    step="any" 
+                    name="mean_area" 
+                    id="mean_area"
+                    placeholder="e.g., 680.0" 
+                    required
+                    aria-label="Mean Area of tumor">
+            </div>
+
+            <!-- Input Field 5: Mean Smoothness -->
+            <div class="input-group">
+                <label for="mean_smoothness">
+                    <i class="fas fa-water"></i>
+                    Mean Smoothness
+                </label>
+                <input 
+                    type="number" 
+                    step="any" 
+                    name="mean_smoothness" 
+                    id="mean_smoothness"
+                    placeholder="e.g., 0.095" 
+                    required
+                    aria-label="Mean Smoothness of tumor">
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-brain"></i>
+                <span>Analyze with AI</span>
+            </button>
+        </form>
+
+        <!-- ============================================
+             RESULT CARD
+             Displays prediction results after analysis
+             Shown only when prediction is available
+             ============================================ -->
+        {% if show_result %}
+        <div class="result-card {{ prediction_type }}" role="alert" aria-live="polite">
+            
+            <!-- Result Header: Icon and Status -->
+            <div class="result-header">
+                <!-- Result Icon (changes based on prediction) -->
+                <div class="result-icon">
+                    {% if prediction_type == 'benign' %}
+                        <!-- Checkmark for Benign (Safe) -->
+                        <i class="fas fa-check-circle"></i>
+                    {% else %}
+                        <!-- Warning for Malignant (Danger) -->
+                        <i class="fas fa-exclamation-triangle"></i>
+                    {% endif %}
+                </div>
+                
+                <!-- Result Information -->
+                <div class="result-info">
+                    <!-- Prediction Class (Benign/Malignant) -->
+                    <div class="result-status">{{ prediction_class }}</div>
+                    
+                    <!-- Prediction Description -->
+                    <div class="result-description">{{ prediction_description }}</div>
+                </div>
+            </div>
+
+            <!-- Confidence Score Section -->
+            <div class="result-confidence">
+                <!-- Confidence Label -->
+                <div class="confidence-label">Prediction Confidence</div>
+                
+                <!-- Confidence Percentage -->
+                <div class="confidence-value">{{ prediction_confidence }}%</div>
+                
+                <!-- Animated Confidence Bar -->
+                <div class="confidence-bar">
+                    <div class="confidence-fill" style="width: {{ prediction_confidence }}%;"></div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ============================================
+             ERROR MESSAGE
+             Displayed when an error occurs
+             ============================================ -->
+        {% if error_message %}
+        <div class="error-card" role="alert">
+            <i class="fas fa-exclamation-circle"></i>
+            <div>
+                <strong>Error:</strong> {{ error_message }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ============================================
+             DISCLAIMER
+             Educational purpose warning
+             ============================================ -->
+        <div class="disclaimer">
+            <div class="disclaimer-title">
+                <i class="fas fa-info-circle"></i>
+                Educational Purpose Only
+            </div>
+            <p>
+                This tool is strictly for educational purposes and demonstrates machine learning applications. 
+                <strong>Do NOT use for actual medical diagnosis.</strong> Always consult qualified healthcare 
+                professionals for medical advice, diagnosis, or treatment.
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================
+         JAVASCRIPT
+         Optional: Add smooth scrolling to results
+         ============================================ -->
+    <script>
+        // Smooth scroll to result card when it appears
+        document.addEventListener('DOMContentLoaded', function() {
+            const resultCard = document.querySelector('.result-card');
+            if (resultCard) {
+                // Smooth scroll to result after a brief delay
+                setTimeout(() => {
+                    resultCard.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                }, 300);
+            }
+        });
+
+        // Form validation feedback
+        const form = document.getElementById('predictionForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                // Add loading state to button
+                const submitBtn = this.querySelector('.btn-submit');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Analyzing...</span>';
+                submitBtn.disabled = true;
+            });
+        }
+    </script>
+</body>
+</html>
