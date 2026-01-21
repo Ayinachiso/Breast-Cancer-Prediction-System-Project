@@ -214,3 +214,6 @@ if __name__ == "__main__":
     
     # Start the Flask development server
     flask_app.run(debug=True)
+
+# Expose the Flask app instance for Gunicorn
+app = flask_app
